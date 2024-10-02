@@ -6,25 +6,31 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 use App\Models\User;
+use Illuminate\Support\Facades\Log as FacadesLog;
+use Illuminate\Support\Facedes\Log;
 
 class AuthController extends Controller
 {
     public function register(Request $request)
     {
+
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users',
+            'username' => 'required|string|max:255',
             'password' => 'required|string|min:8|confirmed',
             'device_name' => 'required',
         ]);
 
+        FacadesLog::info("FDIOAWDOI");
         $user = User::create([
-            'name' => $validated['name'],
-            'email' => $validated['email'],
+            'usernname' => $validated['name'],
             'password' => Hash::make($validated['password']),
         ]);
 
+        $user->save();
+
         $token = $user->createToken($validated['device_name'])->plainTextToken;
+
+        FacadesLog::info($token);
 
         return response()->json([
             'token' => $token,
